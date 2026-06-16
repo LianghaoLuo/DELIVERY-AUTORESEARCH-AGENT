@@ -1,0 +1,82 @@
+[project]
+name = "delivery-autoresearch-agent"
+version = "0.1.0"
+description = "Evidence-driven AutoResearch agent for delivery assignment optimization."
+authors = [{ name = "Delivery AutoResearch Agent Contributors" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "langgraph>=1.0.0",
+    "langchain>=0.2.14",
+    "langchain-openai>=0.1.22",
+    "langchain-anthropic>=0.1.23",
+    "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "anyio>=4.7.0",
+    "mypy>=1.11.1",
+    "pytest>=9.0.3",
+    "ruff>=0.6.1",
+]
+
+[build-system]
+requires = ["setuptools>=73.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["autoresearch_agent*"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.ruff]
+extend-exclude = ["experiments/generated_variants"]
+lint.select = [
+    "E",
+    "F",
+    "I",
+    "D",
+    "D401",
+    "T201",
+    "UP",
+]
+lint.ignore = [
+    "UP006",
+    "UP007",
+    "UP035",
+    "D417",
+    "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "UP"]
+"solvers/*" = ["D"]
+"scripts/*" = ["T201"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.uv]
+# CVE-2026-32597: pyjwt < 2.12.0 accepts unknown `crit` header extensions.
+# Transitive via langgraph-api -> pyjwt. Remove once langgraph-api requires pyjwt>=2.12.0.
+constraint-dependencies = ["pyjwt>=2.12.0"]
+
+[dependency-groups]
+dev = [
+    "anyio>=4.7.0",
+    "langgraph-cli[inmem]>=0.4.10",
+    "mypy>=1.11.1",
+    "pytest>=9.0.3",
+    "ruff>=0.6.1",
+]
